@@ -1,8 +1,13 @@
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data" if (ROOT / "data").exists() else ROOT / "Data"
+OUTPUT_DIR = ROOT / "output" if (ROOT / "output").exists() else ROOT / "Output"
+
 import pandas as pd
 import numpy as np
 
-EXCEL_FILE = Path("data") / "P02 IBERIA.xlsx"
+EXCEL_FILE = DATA_DIR / "P02 IBERIA.xlsx"
 SHEET_NAME = "Todos"
 
 COL_FR1 = "FR1"
@@ -11,7 +16,7 @@ COL_SALES = "A (Vts)"
 COL_FCST = "F (DCH)"
 COL_PERIOD = "Mes Año"
 
-OUT_FILE = Path("output") / "consolidated_sku_fr1_last_month.xlsx"
+OUT_FILE = OUTPUT_DIR / "consolidated_sku_fr1_last_month.xlsx"
 
 MONTH_MAP = {
     "ene": 1, "feb": 2, "mar": 3, "abr": 4, "may": 5, "jun": 6,
