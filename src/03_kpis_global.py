@@ -1,12 +1,17 @@
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data" if (ROOT / "data").exists() else ROOT / "Data"
+OUTPUT_DIR = ROOT / "output" if (ROOT / "output").exists() else ROOT / "Output"
+
 import pandas as pd
 import numpy as np
 
-IN_FILE = Path("output") / "consolidated_sku_fr1_last_month.xlsx"
+IN_FILE = OUTPUT_DIR / "consolidated_sku_fr1_last_month.xlsx"
 
 def main():
     if not IN_FILE.exists():
-        print(f"❌ Missing input: {IN_FILE.as_posix()}")
+        print(f"[ERROR] Missing input: {IN_FILE.as_posix()}")
         print("Run src/02_consolidate_sku_fr1.py first.")
         return
 
@@ -30,7 +35,7 @@ def main():
     nodemand_total = g.loc[g["Ventas_SKU"] == 0, "DCH_SKU"].sum()
 
     # Round after aggregation (integers for units; % keep a few decimals for display)
-    print("📌 GLOBAL KPIs (Governed)")
+    print("[INFO] GLOBAL KPIs (Governed)")
     print(f"Ventas_total (u): {int(round(ventas_total))}")
     print(f"DCH_total (u): {int(round(dch_total))}")
     print(f"AbsError_total (u): {int(round(abserror_total))}")

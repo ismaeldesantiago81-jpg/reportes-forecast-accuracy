@@ -1,8 +1,13 @@
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data" if (ROOT / "data").exists() else ROOT / "Data"
+OUTPUT_DIR = ROOT / "output" if (ROOT / "output").exists() else ROOT / "Output"
+
 import pandas as pd
 import numpy as np
 
-EXCEL_FILE = Path("data") / "P02 IBERIA.xlsx"
+EXCEL_FILE = DATA_DIR / "P02 IBERIA.xlsx"
 SHEET_NAME = "Todos"
 
 COL_GROUP = "FR1"
@@ -34,7 +39,7 @@ def period_to_key(s: str) -> int:
 
 def main():
     if not EXCEL_FILE.exists():
-        print(f"❌ File not found: {EXCEL_FILE.resolve()}")
+        print(f"[ERROR] File not found: {EXCEL_FILE.resolve()}")
         return
 
     df = pd.read_excel(EXCEL_FILE, sheet_name=SHEET_NAME)
@@ -48,7 +53,7 @@ def main():
     periods_sorted = sorted(periods, key=period_to_key)
     last_period = periods_sorted[-1] if periods_sorted else None
     if not last_period:
-        print(f"❌ Could not detect last period from {COL_PERIOD}")
+        print(f"[ERROR] Could not detect last period from {COL_PERIOD}")
         return
 
     # Filter to last period
@@ -75,20 +80,20 @@ def main():
     ok_sales = (abs(total_sales - sales_group) < tol) and (abs(total_sales - sales_subplat) < tol)
     ok_fcst = (abs(total_fcst - fcst_group) < tol) and (abs(total_fcst - fcst_subplat) < tol)
 
-    print(f"✅ Period: {last_period}")
+    print(f"[OK] Period: {last_period}")
     print(f"Ventas total (universe): {total_sales:.6f}")
     print(f"DCH total (universe):    {total_fcst:.6f}")
 
-    print("\n🔎 Coherence check:")
+    print("\n[INFO] Coherence check:")
     print(f"Σ Ventas (FR1)          = {sales_group:.6f}")
     print(f"Σ Ventas (Subplataforma)= {sales_subplat:.6f}")
     print(f"Σ DCH (FR1)             = {fcst_group:.6f}")
     print(f"Σ DCH (Subplataforma)   = {fcst_subplat:.6f}")
 
     if ok_sales and ok_fcst:
-        print("\n🟢 RESULT: OK (Reporte publicable en este control)")
+        print("\n[OK] RESULT: OK (Reporte publicable en este control)")
     else:
-        print("\n🔴 RESULT: KO (Totales no coherentes, NO publicable)")
+        print("\n[ERROR] RESULT: KO (Totales no coherentes, NO publicable)")
         if not ok_sales:
             print(" - KO en Ventas")
         if not ok_fcst:

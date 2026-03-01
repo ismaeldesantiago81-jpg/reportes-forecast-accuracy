@@ -24,25 +24,25 @@ def run_step(name, cmd):
         print(result.stderr.rstrip(), file=sys.stderr)
 
     if result.returncode != 0:
-        print(f"\n🔴 STOP: Step failed (non-zero exit): {name}")
+        print(f"\n[ERROR] STOP: Step failed (non-zero exit): {name}")
         sys.exit(result.returncode)
 
     if "RESULT: KO" in (result.stdout or ""):
-        print(f"\n🔴 STOP: KO detected in step: {name}")
+        print(f"\n[ERROR] STOP: KO detected in step: {name}")
         sys.exit(2)
 
 def main():
     if not Path("src").exists():
-        print("❌ Can't find src/ folder. Run this from the project root (Forecast_accuracy).")
+        print("[ERROR] Can't find src/ folder. Run this from the project root (Forecast_accuracy).")
         sys.exit(1)
 
     # quick debug: show which python we're using
-    print(f"🐍 Using interpreter: {PYTHON}")
+    print(f"[INFO] Using interpreter: {PYTHON}")
 
     for name, cmd in STEPS:
         run_step(name, cmd)
 
-    print("\n🟢 ALL DONE: Report pipeline finished successfully.")
+    print("\n[OK] ALL DONE: Report pipeline finished successfully.")
 
 if __name__ == "__main__":
     main()

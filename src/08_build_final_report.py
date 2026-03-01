@@ -1,15 +1,20 @@
 from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data" if (ROOT / "data").exists() else ROOT / "Data"
+OUTPUT_DIR = ROOT / "output" if (ROOT / "output").exists() else ROOT / "Output"
+
 import pandas as pd
 import numpy as np
 
 # Inputs already produced by previous steps
-CONSOLIDATED = Path("output") / "consolidated_sku_fr1_last_month.xlsx"
-TOP10_FILE = Path("output") / "top10_abserror.xlsx"
-BU_FILE = Path("output") / "table_bu_by_fr1.xlsx"
-SUBPLAT_FILE = Path("output") / "table_subplatform_by_fr1.xlsx"
+CONSOLIDATED = OUTPUT_DIR / "consolidated_sku_fr1_last_month.xlsx"
+TOP10_FILE = OUTPUT_DIR / "top10_abserror.xlsx"
+BU_FILE = OUTPUT_DIR / "table_bu_by_fr1.xlsx"
+SUBPLAT_FILE = OUTPUT_DIR / "table_subplatform_by_fr1.xlsx"
 
 # Raw file used only to detect last period label for the filename + methodology header
-RAW_FILE = Path("data") / "P02 IBERIA.xlsx"
+RAW_FILE = DATA_DIR / "P02 IBERIA.xlsx"
 SHEET_NAME = "Todos"
 COL_PERIOD = "Mes Año"
 
@@ -132,14 +137,14 @@ def main():
     needed = [CONSOLIDATED, BU_FILE, SUBPLAT_FILE]
     missing = [p.as_posix() for p in needed if not p.exists()]
     if missing:
-        print("🔴 RESULT: KO (Missing required files)")
+        print("[ERROR] RESULT: KO (Missing required files)")
         for m in missing:
             print(" -", m)
         return
 
     period = detect_last_period()
     out_name = f"REPORT_ForecastAccuracy_{period.replace(' ', '_')}.xlsx"
-    OUT = Path("output") / out_name
+    OUT = OUTPUT_DIR / out_name
 
     g = pd.read_excel(CONSOLIDATED)
 
@@ -165,7 +170,7 @@ def main():
             )
         meth.to_excel(writer, index=False, sheet_name="99_Methodology")
 
-    print(f"🟢 RESULT: OK (Final report created) -> {OUT.as_posix()}")
+    print(f"[OK] RESULT: OK (Final report created) -> {OUT.as_posix()}")
 
 if __name__ == "__main__":
     main()
